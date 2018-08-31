@@ -81,10 +81,12 @@ export function grafanaAppDirective(playlistSrv, contextSrv, $timeout, $rootScop
 
       sidemenuOpen = scope.contextSrv.sidemenu;
       body.toggleClass('sidemenu-open', sidemenuOpen);
+      body.toggleClass('header-hidden', !sidemenuOpen);
 
       appEvents.on('toggle-sidemenu', () => {
         sidemenuOpen = scope.contextSrv.sidemenu;
         body.toggleClass('sidemenu-open');
+        body.toggleClass('header-hidden');
       });
 
       appEvents.on('toggle-sidemenu-mobile', () => {
@@ -135,6 +137,7 @@ export function grafanaAppDirective(playlistSrv, contextSrv, $timeout, $rootScop
 
           // for some reason, with this class it looks cleanest
           body.addClass('sidemenu-open');
+          body.removeClass('header-hidden');
         }
 
         // close all drops
@@ -170,6 +173,7 @@ export function grafanaAppDirective(playlistSrv, contextSrv, $timeout, $rootScop
           if (sidemenuOpen) {
             sidemenuHidden = true;
             body.removeClass('sidemenu-open');
+            body.removeClass('header-hidden');
             $timeout(function() {
               $rootScope.$broadcast('render');
             }, 100);
@@ -204,7 +208,7 @@ export function grafanaAppDirective(playlistSrv, contextSrv, $timeout, $rootScop
       document.addEventListener('visibilitychange', userActivityDetected);
 
       // check every 2 seconds
-      setInterval(checkForInActiveUser, 2000);
+      // setInterval(checkForInActiveUser, 2000);
 
       appEvents.on('toggle-view-mode', () => {
         lastActivity = 0;

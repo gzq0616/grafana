@@ -18,6 +18,9 @@ export class InfluxQueryCtrl extends QueryCtrl {
   selectMenu: any;
   measurementSegment: any;
   removeTagFilterSegment: any;
+  timeShiftUnits: any[];
+  timeShiftUnit: string;
+  timeShiftValue: number;
 
   /** @ngInject **/
   constructor($scope, $injector, private templateSrv, private $q, private uiSegmentSrv) {
@@ -61,6 +64,19 @@ export class InfluxQueryCtrl extends QueryCtrl {
       fake: true,
       value: '-- remove tag filter --',
     });
+
+    // add time shift editor
+    this.timeShiftUnits = [
+      { text: 'Minutes', value: 'm' },
+      { text: 'Hours', value: 'h' },
+      { text: 'Days', value: 'd' },
+      { text: 'Weeks', value: 'w' },
+      { text: 'Month', value: 'M' },
+      { text: 'Years', value: 'y' },
+    ];
+
+    this.timeShiftValue = this.target.timeShiftValue ? this.target.timeShiftValue : 0;
+    this.timeShiftUnit = this.target.timeShiftUnit ? this.target.timeShiftUnit : 'd';
   }
 
   removeOrderByTime() {

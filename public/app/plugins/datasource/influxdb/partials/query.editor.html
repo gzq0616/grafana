@@ -131,6 +131,16 @@
       </div>
     </div>
 
+    <div class="gf-form-inline">
+      <div class="gf-form">
+        <label class="gf-form-label query-keyword width-7">TIME SHIFT</label>
+        <input type="text" class="gf-form-input" ng-model="ctrl.target.timeShiftValue" spellcheck='false' placeholder="Time Shift" ng-blur="ctrl.refresh()">
+        <div class="gf-form-select-wrapper">
+          <select class="gf-form-input gf-size-auto" ng-model="ctrl.target.timeShiftUnit" ng-options="f.value as f.text for f in ctrl.timeShiftUnits" ng-change="ctrl.refresh()"></select>
+        </div>
+      </div>
+    </div>
+
     <div class="gf-form-inline"  ng-hide="ctrl.target.resultFormat === 'table'">
       <div class="gf-form max-width-30">
         <label class="gf-form-label query-keyword width-7">ALIAS BY</label>

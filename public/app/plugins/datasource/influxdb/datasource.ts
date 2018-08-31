@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import moment from 'moment';
 
 import * as dateMath from 'app/core/utils/datemath';
 import InfluxSeries from './influx_series';
@@ -58,7 +59,11 @@ export default class InfluxDatasource {
       scopedVars.interval = scopedVars.__interval;
 
       queryModel = new InfluxQuery(target, this.templateSrv, scopedVars);
-      return queryModel.render(true);
+      var query = queryModel.render(true);
+      if (target.timeShiftValue > 0 && target.timeShiftUnit) {
+        query = query.replace(/\$timeFilter/g, this.getTimeShift(options, target.timeShiftValue, target.timeShiftUnit));
+      }
+      return query;
     }).reduce((acc, current) => {
       if (current !== '') {
         acc += ';' + current;
@@ -98,6 +103,19 @@ export default class InfluxDatasource {
         var alias = target.alias;
         if (alias) {
           alias = this.templateSrv.replace(target.alias, options.scopedVars);
+        }
+        var series = result.series;
+        if (target.timeShiftValue > 0 && target.timeShiftUnit) {
+          _.map(series, serie => {
+            var values = _.map(serie.values, value => {
+              value[0] = moment(value[0])
+                .add(target.timeShiftValue, target.timeShiftUnit)
+                .valueOf();
+              return value;
+            });
+            serie.values = values;
+            return serie;
+          });
         }
 
         var influxSeries = new InfluxSeries({
@@ -299,6 +317,12 @@ export default class InfluxDatasource {
     }
 
     return 'time >= ' + from + ' and time <= ' + until;
+  }
+
+  getTimeShift(options, value, unit) {
+    var form = options.range.from.clone().add(-1 * value, unit);
+    var until = options.range.to.clone().add(-1 * value, unit);
+    return 'time > ' + form.unix() + 's and time < ' + until.unix() + 's';
   }
 
   getInfluxTime(date, roundUp) {

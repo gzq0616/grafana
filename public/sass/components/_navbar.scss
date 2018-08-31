@@ -159,6 +159,15 @@
     }
   }
 
+  .header-hidden {
+    .navbar {
+      display: none;
+    }
+    .show-logo {
+      display: none;
+    }
+  }
+
   .navbar-page-btn {
     .gicon {
       display: inline-block;
